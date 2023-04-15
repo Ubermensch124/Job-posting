@@ -1,39 +1,38 @@
+import uvicorn
+from api.routers import main_router
+from core.config import settings
+from db.session import Base, engine
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
-from api.routers import main_router
-from core.config import settings
-from db.session import session
-from db.models.user import Job
+
+def include_routers(application: FastAPI) -> None:
+    application.include_router(main_router)
 
 
-def include_routers(app: FastAPI) -> None:
-    app.include_router(main_router)
-
-
-def staticfiles(app: FastAPI) -> None:
-    app.mount('/static', StaticFiles(directory='static'), name='static')
-
-
-def create_tables() -> None:
-    pass
-    # job = Job(title = '123123Column(String, nullable=False)',
-    # company = 'Column(String, nullable=False)',
-    # location = 'Column(String, nullable=False)',
-    # description = 'Column(String, nullable=False)')
-    
-    # session.add(job)
-    # session.commit()
-    # session.refresh(job)
+def staticfiles(application: FastAPI) -> None:
+    application.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 def start_app() -> FastAPI:
-    app = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
-    include_routers(app)
-    staticfiles(app)
-    create_tables()
-    return app
+    application = FastAPI(title=settings.PROJECT_NAME, version=settings.PROJECT_VERSION)
+    include_routers(application)
+    staticfiles(application)
+    return application
 
 
 app = start_app()
-print('All is good')
+
+
+@app.on_event("startup")
+def db():
+    Base.metadata.create_all(engine)
+
+
+# @app.on_event("shutdown")
+# def db():
+#     Base.metadata.drop_all(engine)
+
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="127.0.0.1", port=80, reload=True)

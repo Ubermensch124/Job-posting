@@ -1,0 +1,17 @@
+fastapi
+uvicorn[standard]
+jinja2
+aiofiles
+psycopg2
+sqlalchemy
+python-dotenv
+pydantic[email]
+passlib[bcrypt]
+requests
+python-jose
+python-multipart
+
+mypy
+pytest
+black
+isort

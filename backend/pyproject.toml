@@ -1,0 +1,21 @@
+[tool.black]
+line-length = 120
+exclude = '''
+(
+  /(
+      \.git
+    | \.mypy_cache
+    | \.env
+  )/
+)
+'''
+
+[tool.isort]
+profile = "black"
+skip = [".env"]
+force_grid_wrap = 0
+
+[tool.pylint.main]
+extension-pkg-allow-list = ["pydantic"]
+disable = ["C0114", "C0115", "C0116", "R0903", "E0401"]    # module/class/func docstrings + too-few-public-methods
+max-line-length=120
